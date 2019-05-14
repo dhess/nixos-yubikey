@@ -1,0 +1,3 @@
+* nixos-yubikey
+
+Create NixOS images suitable for initializing Yubikeys.
