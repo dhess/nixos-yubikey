@@ -24,7 +24,9 @@
 
    - An ~x86_64-linux~ host that you trust, and that can be
      "airgapped" during the key generation and YubiKey provisioning
-     process.
+     process. The host should have at least 2GB of RAM, because the
+     NixOS image will copy its filesystem to RAM and run from there to
+     prevent key leakage to persistent storage.
 
 ** Usage
 
