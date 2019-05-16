@@ -12,7 +12,18 @@ let
 
   pkgs = import nixpkgs { system = "x86_64-linux"; };
 
+  drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
+
   nixos-yubikey-configuration = {
+
+    ## Image overrides.
+
+    isoImage.isoBaseName = pkgs.lib.mkForce "nixos-yubikey";
+
+    # Always copytoram so that, if the image is booted from, e.g., a
+    # USB stick, nothing is mistakenly written to persistent storage.
+
+    boot.kernelParams = [ "copytoram" ];
 
     ## Required packages and services.
     #
@@ -24,6 +35,7 @@ let
       parted
       pcsclite
       pcsctools
+      pinentry_ncurses
       pwgen
       yubikey-manager
       yubikey-personalization
@@ -66,15 +78,21 @@ let
 
     ## Secure defaults.
 
-    # Disable HISTFILE globally.
-    environment.interactiveShellInit = ''
-      unset HISTFILE
-    '';
-
     boot.cleanTmpDir = true;
     boot.kernel.sysctl = {
       "kernel.unprivileged_bpf_disabled" = 1;
     };
+
+
+    ## Set up the shell for making keys.
+
+    environment.interactiveShellInit = ''
+      unset HISTFILE
+      export GNUPGHOME=/run/user/$(id -u)/gnupg
+      [ -d $GNUPGHOME ] || mkdir $GNUPGHOME
+      cp ${drduh-gpg-conf}/gpg.conf $GNUPGHOME
+      echo "\$GNUPGHOME is $GNUPGHOME"
+    '';
   };
 
 
