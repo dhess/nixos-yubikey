@@ -108,10 +108,3 @@
    - [[https://github.com/drduh/YubiKey-Guide/issues/19][Using two yubikeys not covered under guide]]
 
    - [[https://forum.yubico.com/viewtopic38a1.html?f=35&t=2400#p10091][Use PGP keys on multiple yubikeys]]
-
-   Using PGP/OpenPGP/GnuPG safely and securely is difficult. Here are
-   some guides on how to do it.
-
-   - [[https://gist.github.com/grugq/03167bed45e774551155][Operational PGP (grugq)]]
-
-   - [[https://lists.gnupg.org/pipermail/gnupg-users/2015-October/054608.html][TOFU for GnuPG]]
