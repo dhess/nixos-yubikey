@@ -36,10 +36,10 @@ let
   # Build against a nixpkgs-channels repo. This can run fairly often
   # as the channels don't update so much.
   mkNixpkgsChannels = nixosYubiKeyBranch: nixpkgsRev: {
+    checkinterval = 60 * 60;
     inputs = {
       nixosYubiKey = mkFetchGithub "${nixosYubiKeyUri} ${nixosYubiKeyBranch}";
       nixpkgs_override = mkFetchGithub "https://github.com/NixOS/nixpkgs-channels.git ${nixpkgsRev}";
-      checkinterval = 60 * 60;
     };
   };
 
