@@ -1,3 +1,115 @@
 * nixos-yubikey
 
-Create NixOS images suitable for initializing Yubikeys.
+  Create NixOS images suitable for initializing YubiKeys.
+
+  This repository builds a bootable NixOS image that includes all of
+  the software you'll typically need to initialize a YubiKey, and to
+  configure it for use with GnuPG and SSH. It follows recommended
+  security practices by disabling network interfaces and running the
+  configuration environment from a ramdisk (not only the ~$GNUPGHOME~,
+  but also the entire NixOS filesystem). The only way to write state
+  to persistent storage is by explicit user action.
+
+** Requirements
+
+   You'll need the following:
+
+   - An environment capable of building [[https://github.com/NixOS/nixpkgs][Nixpkgs]] for ~x86_64-linux~
+     hosts.
+
+   - At least one YubiKey, preferably a YubiKey 4 or later.
+
+   - At least one USB flash drive (preferably 2 or more), for keeping
+     your master GnuPG key offline and secure.
+
+   - An ~x86_64-linux~ host that you trust, and that can be
+     "airgapped" during the key generation and YubiKey provisioning
+     process.
+
+** Usage
+
+   1. Build the NixOS bootable image.
+      #+BEGIN_SRC sh
+      nix build
+      #+END_SRC
+   2. Copy the ISO file in ~result/iso~ to a USB stick or CD/DVD.
+   3. Boot the image on trusted hardware.
+   4. Follow one of the guides below.
+
+** Guides
+
+   There are numerous guides on how to initialize YubiKeys and to
+   prepare them for use with GnuPG and SSH. Below are the guides I
+   found most useful and/or prudent, but whether you also find them
+   useful or prudent will depend on your own security preferences and
+   needs. If you have the time, I think it's a good idea to review
+   each one of them before proceeding with your own YubiKey
+   provisioning, because each guide has at least one or two insights
+   or rationales that the others lack, meaning you're less likely to
+   miss something important.
+
+   As of May 2019, few of the guides below include instructions
+   specific to NixOS, but for the most part you can skip the
+   OS-specific instructions (e.g., which packages you'll need to
+   install), as this image should include everything you need, and is
+   easy to modify if there's something missing. Furthermore, because
+   you shouldn't need to install any additional software, the image
+   disables your machine's network interfaces from the very beginning
+   of the process, so you can also ignore the bits of the guides that
+   warn you to disable networking after installing packages. (Of
+   course, it's always a good idea to ensure that all network
+   interfaces are disabled before proceeding with key generation,
+   anyway, in case of a bug or misconfiguration.)
+
+   - [[https://github.com/drduh/YubiKey-Guide][DrDuh's YubiKey guide]]
+
+     This one is my personal favorite. Note that the ~gpg.conf~
+     referred to in this guide is already set up for you when you open
+     a shell in the NixOS YubiKey image.
+
+   - [[https://rzetterberg.github.io/yubikey-gpg-nixos.html][Setting up GnuPG + YubiKey on NixoS for SSH authentication]]
+
+     Contains some NixOS-specific information, all of which has been
+     incorporated into this NixOS YubiKey image.
+
+   - [[https://www.forgesi.net/gpg-ssh-with-the-yubikey-5/][GPG/SSH with the YubiKey 5]]
+
+     Probably the next best guide I found after DrDuh's guide.
+
+   - [[https://www.andreagrandi.it/2017/09/30/configuring-offline-gnupg-masterkey-subkeys-on-yubikey/][Configuring an offline GnuPG master key and subkeys on YubiKey]]
+
+   - [[https://shankarkulumani.com/2019/03/gpg.html][Starting with GPG and YubiKey]]
+
+     Probably the most "gentle" of the guides.
+
+** Other useful information
+
+   Debian's (and Debian developers') guides to using subkeys and why
+   they're useful are probably the best resources on these topics,
+   though they're not specific to YubiKeys (or even hardware keys at
+   all):
+
+   - [[https://wiki.debian.org/Subkeys][Using OpenPGP subkeys in Debian development]]
+
+   - [[https://wiki.debian.org/OfflineMasterKey][Offline master key]]
+
+   - [[https://wiki.debian.org/GnuPG/AirgappedMasterKey][Airgapped master key]]
+
+   - [[https://github.com/tomlowenthal/documentation/blob/master/gpg/smartcard-keygen.md][Smartcard keygen]]
+
+   Everyone recommends using a 2nd YubiKey to make a backup of your
+   primary YubiKey, but in practice, using 2 or more YubiKeys with the
+   same subkeys is tricky. Here are some resources for more
+   information on this subject, plus the currently best-known
+   workarounds.
+
+   - [[https://github.com/drduh/YubiKey-Guide/issues/19][Using two yubikeys not covered under guide]]
+
+   - [[https://forum.yubico.com/viewtopic38a1.html?f=35&t=2400#p10091][Use PGP keys on multiple yubikeys]]
+
+   Using PGP/OpenPGP/GnuPG safely and securely is difficult. Here are
+   some guides on how to do it.
+
+   - [[https://gist.github.com/grugq/03167bed45e774551155][Operational PGP (grugq)]]
+
+   - [[https://lists.gnupg.org/pipermail/gnupg-users/2015-October/054608.html][TOFU for GnuPG]]
