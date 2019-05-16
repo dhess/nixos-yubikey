@@ -89,7 +89,7 @@ let
     environment.interactiveShellInit = ''
       unset HISTFILE
       export GNUPGHOME=/run/user/$(id -u)/gnupg
-      [ -d $GNUPGHOME ] || mkdir $GNUPGHOME
+      [ -d $GNUPGHOME ] || install -m 0700 -d $GNUPGHOME
       cp ${drduh-gpg-conf}/gpg.conf $GNUPGHOME
       echo "\$GNUPGHOME is $GNUPGHOME"
     '';
