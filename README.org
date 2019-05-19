@@ -32,7 +32,7 @@
 
    1. Build the NixOS bootable image.
       #+BEGIN_SRC sh
-      nix build
+      nix build -f default.nix nixos-yubikey
       #+END_SRC
    2. Copy the ISO file in ~result/iso~ to a USB stick or CD/DVD.
    3. Boot the image on trusted hardware.

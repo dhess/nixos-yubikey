@@ -2,7 +2,7 @@ let
 
   lib = import ../lib;
   inherit (lib) fixedNixpkgs;
-  nixos-yubikey = (import ../.) {};
+  localPkgs = (import ../.) {};
 
 in
 
@@ -25,7 +25,7 @@ let
 
   jobs = (mapTestOn (rec {
 
-    nixos-yubikey = x86_64_linux;
+    localPkgs.nixos-yubikey = x86_64_linux;
 
   })) // (rec {
 
@@ -33,7 +33,7 @@ let
       name = "nixos-yubikey-x86_64-linux";
       meta.description = "nixos-yubikey (x86_64-linux)";
       constituents = with jobs; [
-        nixos-yubikey.x86_64-linux
+        localPkgs.nixos-yubikey.x86_64-linux
       ];
     };
 

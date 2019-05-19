@@ -105,4 +105,6 @@ let
   nixos-yubikey = nixos.iso_minimal;
 
 in
-nixos-yubikey
+{
+  inherit nixos-yubikey;
+}
