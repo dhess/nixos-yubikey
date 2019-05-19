@@ -30,6 +30,7 @@ let
     # ref: https://rzetterberg.github.io/yubikey-gpg-nixos.html
     environment.systemPackages = with pkgs; [
       cryptsetup
+      ent
       gnupg
       paperkey
       parted
