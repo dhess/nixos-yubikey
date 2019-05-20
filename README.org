@@ -99,6 +99,13 @@
 
    - [[https://github.com/tomlowenthal/documentation/blob/master/gpg/smartcard-keygen.md][Smartcard keygen]]
 
+   This guide doesn't cover Yubikeys in any depth, but it does a good
+   job of covering out to create additional GPG ID's (i.e., additional
+   email addresses associated with your key), and also more
+   information on how to use ~hopenpgp-tools~ and ~pgpdump~.
+
+   - [[https://blog.tinned-software.net/create-gnupg-key-with-sub-keys-to-sign-encrypt-authenticate/][https://blog.tinned-software.net/create-gnupg-key-with-sub-keys-to-sign-encrypt-authenticate/]]
+
    Everyone recommends using a 2nd YubiKey to make a backup of your
    primary YubiKey, but in practice, using 2 or more YubiKeys with the
    same subkeys is tricky. Here are some resources for more
@@ -108,3 +115,9 @@
    - [[https://github.com/drduh/YubiKey-Guide/issues/19][Using two yubikeys not covered under guide]]
 
    - [[https://forum.yubico.com/viewtopic38a1.html?f=35&t=2400#p10091][Use PGP keys on multiple yubikeys]]
+
+   If you want to use your Yubikey with VMware Workstation or VMware
+   Fusion, you'll need to edit your virtual machine's VMX file.
+
+   - [[https://support.yubico.com/support/solutions/articles/15000008891-troubleshooting-vmware-workstation-device-passthrough][https://support.yubico.com/support/solutions/articles/15000008891-troubleshooting-vmware-workstation-device-passthrough]]
+   
