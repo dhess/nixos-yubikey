@@ -40,7 +40,6 @@ let
       pgpdump
       pinentry_ncurses
       pwgen
-      shred
       yubikey-manager
       yubikey-personalization
     ];
