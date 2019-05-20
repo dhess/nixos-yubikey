@@ -32,12 +32,15 @@ let
       cryptsetup
       ent
       gnupg
+      (haskell.lib.justStaticExecutables haskellPackages.hopenpgp-tools)
       paperkey
       parted
       pcsclite
       pcsctools
+      pgpdump
       pinentry_ncurses
       pwgen
+      shred
       yubikey-manager
       yubikey-personalization
     ];
