@@ -31,6 +31,8 @@ let
     environment.systemPackages = with pkgs; [
       cryptsetup
       ent
+      git
+      gitAndTools.git-extras
       gnupg
       (haskell.lib.justStaticExecutables haskellPackages.hopenpgp-tools)
       paperkey
