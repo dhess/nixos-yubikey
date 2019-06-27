@@ -4,13 +4,15 @@ let
   outPath = localLib.fixedNixpkgs;
 
 in
-{ supportedSystems ? [ "x86_64-linux" ]
+{ system ? "x86_64-linux"
+, crossSystem ? null
+, config ? {}
+, supportedSystems ? [ "x86_64-linux" ]
 , nixpkgs ? { inherit outPath; revCount = 56789; shortRev = "gfedcba"; }
+, pkgs ? import nixpkgs { inherit system crossSystem config; }
 }:
 
 let
-
-  pkgs = import nixpkgs { system = "x86_64-linux"; };
 
   drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
 
