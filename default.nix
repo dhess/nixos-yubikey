@@ -6,7 +6,7 @@ let
 in
 { system ? "x86_64-linux"
 , crossSystem ? null
-, config ? {}
+, config ? { allowBroken = true; }
 , supportedSystems ? [ "x86_64-linux" ]
 , nixpkgs ? { inherit outPath; revCount = 56789; shortRev = "gfedcba"; }
 , pkgs ? import nixpkgs { inherit system crossSystem config; }
