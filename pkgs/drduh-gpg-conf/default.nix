@@ -4,13 +4,13 @@
 
 let
 
-  version = "20190106";
+  version = "20200213";
 
   src = fetchFromGitHub {
     owner = "drduh";
     repo = "config";
-    rev = "1d69c9c6be427b1c3b9febe8defc36594a3f75b5";
-    sha256 = "0dhx5lki4y5w058vrw2i55xwja8mj1agsr9dxhap05b5pp88psbm";
+    rev = "681a5e2252f8097e3f0ab70fc49b0977bb3cfe0c";
+    sha256 = "0d7d1ma9hxq1ysc2jq737602qnyjg1gkdyxc791a7g3axcxph98z";
   };
 
 in
