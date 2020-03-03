@@ -46,7 +46,7 @@ let
       pcsclite
       pcsctools
       pgpdump
-      pinentry_ncurses
+      pinentry-curses
       pwgen
       yubikey-manager
       yubikey-personalization
