@@ -35,6 +35,7 @@ let
     environment.systemPackages = with pkgs; [
       cfssl_1_3_4
       cryptsetup
+      diceware
       ent
       git
       gitAndTools.git-extras
