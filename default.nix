@@ -18,6 +18,8 @@ let
     pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
   '';
 
+  yk-scripts = pkgs.callPackage pkgs/yk-scripts {};
+
   drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
 
   cfssl_1_3_4 = pkgs.callPackage pkgs/cfssl/1.3.4.nix {};
@@ -52,6 +54,7 @@ let
       pgpdump
       pinentry-curses
       pwgen
+      yk-scripts
       yubikey-manager
       yubikey-personalization
     ];
@@ -122,5 +125,6 @@ let
 
 in
 {
+  inherit yk-scripts;
   inherit nixos-yubikey;
 }
