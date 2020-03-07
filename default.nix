@@ -14,6 +14,10 @@ in
 
 let
 
+  gpg-agent-conf = pkgs.writeText "gpg-agent.conf" ''
+    pinentry-program ${pkgs.pinentry-curses}/bin/pinentry-curses
+  '';
+
   drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
 
   cfssl_1_3_4 = pkgs.callPackage pkgs/cfssl/1.3.4.nix {};
@@ -101,7 +105,8 @@ let
       unset HISTFILE
       export GNUPGHOME=/run/user/$(id -u)/gnupg
       [ -d $GNUPGHOME ] || install -m 0700 -d $GNUPGHOME
-      cp ${drduh-gpg-conf}/gpg.conf $GNUPGHOME
+      cp ${drduh-gpg-conf}/gpg.conf $GNUPGHOME/gpg.conf
+      cp ${gpg-agent-conf}  $GNUPGHOME/gpg-agent.conf
       echo "\$GNUPGHOME is $GNUPGHOME"
     '';
   };
