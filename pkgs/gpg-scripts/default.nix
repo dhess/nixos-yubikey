@@ -377,6 +377,12 @@ let
         sudo chmod 0777 $encrypted_mount
         ${gitcmd} clone $GNUPGHOME $encrypted_mount/gnupg
         echo "done."
+
+        echo "Fixing permissions on backup directory..."
+        chmod 0700 $encrypted_mount/gnupg
+        find $encrypted_mount/gnupg -type d -exec chmod 0700 {} \;
+        find $encrypted_mount/gnupg -type f -exec chmod 0600 {} \;
+        echo "done."
       fi
 
       unmount $encrypted_mount
