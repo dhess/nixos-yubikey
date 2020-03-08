@@ -20,6 +20,8 @@ let
 
   yk-scripts = pkgs.callPackage pkgs/yk-scripts {};
 
+  gpg-scripts = pkgs.callPackage pkgs/gpg-scripts {};
+
   drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
 
   cfssl_1_3_4 = pkgs.callPackage pkgs/cfssl/1.3.4.nix {};
@@ -46,6 +48,7 @@ let
       git
       gitAndTools.git-extras
       gnupg
+      gpg-scripts
       (haskell.lib.justStaticExecutables haskellPackages.hopenpgp-tools)
       paperkey
       parted
@@ -125,6 +128,7 @@ let
 
 in
 {
+  inherit gpg-scripts;
   inherit yk-scripts;
   inherit nixos-yubikey;
 }
