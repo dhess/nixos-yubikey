@@ -244,10 +244,10 @@ let
       fi
 
       sudo ${partedcmd} --align=opt --script -- $DRIVE \
-        mklabel gpt                               \
-        mkpart primary 1MiB 2GiB                  \
-        mkpart primary 2GiB -0                    \
-        name 1 encrypted                          \
+        mklabel gpt                                    \
+        mkpart primary ext2 1MiB 2GiB                  \
+        mkpart primary fat32 2GiB -0                   \
+        name 1 encrypted                               \
         name 2 public
     '';
 
