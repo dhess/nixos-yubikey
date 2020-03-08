@@ -27,6 +27,7 @@ in pkgs.lib.fix (jobsets: {
     meta.description = "nixos-yubikey (x86_64-linux)";
     constituents = with jobs; [
       localPkgs.nixos-yubikey.x86_64-linux
+      localPkgs.nixos-yubikey-uk.x86_64-linux
     ];
   };
 })

@@ -117,8 +117,12 @@ let
     '';
   };
 
+  nixos-yubikey-configuration-uk = nixos-yubikey-configuration // {
+    console.keyMap = "uk";
+    i18n.defaultLocale = "en_GB.UTF-8";
+  };
 
-  ## Build the image.
+  ## Build the images.
 
   nixos = import (localLib.fixedNixpkgs + "/nixos/release.nix") {
     inherit supportedSystems nixpkgs;
@@ -126,9 +130,16 @@ let
   };
   nixos-yubikey = nixos.iso_minimal;
 
+  nixos-uk = import (localLib.fixedNixpkgs + "/nixos/release.nix") {
+    inherit supportedSystems nixpkgs;
+    configuration = nixos-yubikey-configuration-uk;
+  };
+  nixos-yubikey-uk = nixos-uk.iso_minimal;
+
 in
 {
   inherit gpg-scripts;
   inherit yk-scripts;
   inherit nixos-yubikey;
+  inherit nixos-yubikey-uk;
 }
