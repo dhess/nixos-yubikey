@@ -42,6 +42,7 @@ let
     else
       echo "$GNUPGHOME/keyid file doesn't exist."
       echo "Write the secret key ID to a file with that name and re-run the script."
+      exit 70
     fi
   '';
 
@@ -105,6 +106,14 @@ let
     else
       DRIVE="$1"
     fi
+
+    p1="1"
+    p2="2"
+    encrypted_partition=$DRIVE$p1
+    public_partition=$DRIVE$p2
+
+    encrypted_mount="/tmp/encrypted"
+    public_mount="/tmp/public"
   '';
 
   gpg-scripts = rec {
@@ -276,34 +285,15 @@ let
         exit 1
       fi
 
-      p1="1"
-      p2="2"
-      encrypted_partition=$DRIVE$p1
-      public_partition=$DRIVE$p2
-
       sudo ${cryptsetupcmd} luksFormat $encrypted_partition
       sudo ${cryptsetupcmd} open $encrypted_partition encrypted
       sudo mkfs.ext4 /dev/mapper/encrypted -L encrypted
       sudo ${cryptsetupcmd} close /dev/mapper/encrypted
-
       sudo mkfs.vfat -n public $public_partition
     '';
 
     gpg-backup-sync-keys = writeShellScriptBin "gpg-backup-sync-keys" ''
       set -e
-
-      unmount() {
-        echo "Unmounting $1..."
-        sudo sync
-        sudo sync
-        sudo umount $1
-        echo "done."
-
-        echo "Removing mount point $1..."
-        sudo rmdir $1
-        echo "done."
-      }
-
       ${drive-opts}
 
       echo "Checking whether $GNUPGHOME is clean... "
@@ -320,22 +310,7 @@ let
 
       ${get_keyid}
 
-      p1="1"
-      p2="2"
-      encrypted_partition=$DRIVE$p1
-      public_partition=$DRIVE$p2
-
-      encrypted_mount="/tmp/encrypted"
-      public_mount="/tmp/public"
-
-      echo "Opening encrypted filesystem..."
-      sudo ${cryptsetupcmd} open $encrypted_partition encrypted
-      echo "done."
-
-      echo "Mounting encrypted filesystem on $encrypted_mount..."
-      sudo mkdir $encrypted_mount
-      sudo mount /dev/mapper/encrypted $encrypted_mount
-      echo "done."
+      gpg-backup-mount $DRIVE
 
       echo "Checking for an existing backup..."
       if [ -d $encrypted_mount/gnupg ] ; then
@@ -394,57 +369,18 @@ let
         echo "done."
       fi
 
-      unmount $encrypted_mount
-
-      echo "Closing encrypted filesystem..."
-      sudo ${cryptsetupcmd} close /dev/mapper/encrypted
-      echo "done."
-
-      echo "Mounting public filesystem on $public_mount..."
-      sudo mkdir $public_mount
-      sudo mount -o rw,umask=0000 $public_partition $public_mount
-      echo "done."
-
       echo "Exporting your public key to the public filesystem..."
       ${gpg} --armor --export $KEYID > $public_mount/$KEYID-$(date +%F).txt
       echo "done."
 
-      unmount $public_mount
+      gpg-backup-unmount $DRIVE
     '';
 
     gpg-backup-restore-keys = writeShellScriptBin "gpg-backup-restore-keys" ''
       set -e
-
-      unmount() {
-        echo "Unmounting $1..."
-        sudo sync
-        sudo sync
-        sudo umount $1
-        echo "done."
-
-        echo "Removing mount point $1..."
-        sudo rmdir $1
-        echo "done."
-      }
-
       ${drive-opts}
 
-      p1="1"
-      encrypted_partition=$DRIVE$p1
-
-      echo "Attempting to open the encrypted filesystem on $encrypted_partition..."
-      if $(sudo ${cryptsetupcmd} open $encrypted_partition encrypted); then
-        echo "done."
-      else
-        echo "couldn't open an encrypted filesystem on $encrypted_partition. Aborting."
-        exit 1
-      fi
-
-      encrypted_mount="/tmp/encrypted"
-      echo "Mounting encrypted filesystem on $encrypted_mount..."
-      sudo mkdir $encrypted_mount
-      sudo mount /dev/mapper/encrypted $encrypted_mount
-      echo "done."
+      gpg-backup-mount $DRIVE
 
       echo "Checking for an existing backup..."
       if [ -d $encrypted_mount/gnupg ] ; then
@@ -474,10 +410,26 @@ let
         echo "There doesn't appear to be a gpg backup on $DRIVE. Aborting the restore."
       fi
 
-      unmount $encrypted_mount
+      gpg-backup-unmount $DRIVE
+    '';
 
-      echo "Closing encrypted filesystem..."
-      sudo ${cryptsetupcmd} close /dev/mapper/encrypted
+    gpg-backup-mount = writeShellScriptBin "gpg-backup-mount" ''
+      set -e
+
+      ${drive-opts}
+
+      echo "Opening encrypted filesystem..."
+      sudo ${cryptsetupcmd} open $encrypted_partition encrypted
+      echo "done."
+
+      echo "Mounting encrypted filesystem on $encrypted_mount..."
+      sudo mkdir $encrypted_mount
+      sudo mount /dev/mapper/encrypted $encrypted_mount
+      echo "done."
+
+      echo "Mounting public filesystem on $public_mount..."
+      sudo mkdir $public_mount
+      sudo mount -o rw,umask=0000 $public_partition $public_mount
       echo "done."
     '';
 
@@ -498,12 +450,8 @@ let
 
       ${drive-opts}
 
-      encrypted_mount="/tmp/encrypted"
-      public_mount="/tmp/public"
-
       if [ -d $encrypted_mount ] ; then
         unmount $encrypted_mount
-
         echo "Closing encrypted filesystem..."
         sudo ${cryptsetupcmd} close /dev/mapper/encrypted
         echo "done."
