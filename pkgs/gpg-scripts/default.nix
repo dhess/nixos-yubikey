@@ -141,6 +141,15 @@ let
       ${gpg} --expert --edit-key $KEYID
     '';
 
+    gpg-renew-subkeys = writeShellScriptBin "gpg-renew-subkeys" ''
+      set -e
+
+      ${opts}
+
+      ${get_keyid}
+      ${gpg} --expert --edit-key $KEYID
+    '';
+
     gpg-add-emails = writeShellScriptBin "gpg-add-emails" ''
       set -e
 
@@ -401,6 +410,75 @@ let
       echo "done."
 
       unmount $public_mount
+    '';
+
+    gpg-backup-restore-keys = writeShellScriptBin "gpg-backup-restore-keys" ''
+      set -e
+
+      unmount() {
+        echo "Unmounting $1..."
+        sudo sync
+        sudo sync
+        sudo umount $1
+        echo "done."
+
+        echo "Removing mount point $1..."
+        sudo rmdir $1
+        echo "done."
+      }
+
+      ${drive-opts}
+
+      p1="1"
+      encrypted_partition=$DRIVE$p1
+
+      echo "Attempting to open the encrypted filesystem on $encrypted_partition..."
+      if $(sudo ${cryptsetupcmd} open $encrypted_partition encrypted); then
+        echo "done."
+      else
+        echo "couldn't open an encrypted filesystem on $encrypted_partition. Aborting."
+        exit 1
+      fi
+
+      encrypted_mount="/tmp/encrypted"
+      echo "Mounting encrypted filesystem on $encrypted_mount..."
+      sudo mkdir $encrypted_mount
+      sudo mount /dev/mapper/encrypted $encrypted_mount
+      echo "done."
+
+      echo "Checking for an existing backup..."
+      if [ -d $encrypted_mount/gnupg ] ; then
+
+        # Existing backup.
+        echo "There appears to be a backup, we'll use that."
+
+        if (${whiptail} --title "Restore GnuPG keys from backup?" --defaultno --yesno "This operation will remove the contents of $GNUPGHOME and restore it from your USB backup drive. Do you want to proceed?" 8 78); then
+          echo "Proceeding with restore."
+          pkill gpg-agent || true
+          rm -rf $GNUPGHOME
+
+          echo "Cloning the backup to $GNUPGHOME..."
+          ${gitcmd} clone $encrypted_mount/gnupg $GNUPGHOME
+          echo "done."
+
+          echo "Fixing permissions on restored directory..."
+          chmod 0700 $GNUPGHOME
+          find $GNUPGHOME -type d -exec chmod 0700 {} \;
+          find $GNUPGHOME -type f -exec chmod 0600 {} \;
+          echo "done."
+
+        else
+          echo "Aborting the restore."
+        fi
+      else
+        echo "There doesn't appear to be a gpg backup on $DRIVE. Aborting the restore."
+      fi
+
+      unmount $encrypted_mount
+
+      echo "Closing encrypted filesystem..."
+      sudo ${cryptsetupcmd} close /dev/mapper/encrypted
+      echo "done."
     '';
 
     gpg-backup-unmount = writeShellScriptBin "gpg-backup-unmount" ''
