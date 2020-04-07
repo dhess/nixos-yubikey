@@ -24,7 +24,7 @@ let
 
   drduh-gpg-conf = pkgs.callPackage pkgs/drduh-gpg-conf {};
 
-  cfssl_1_3_4 = pkgs.callPackage pkgs/cfssl/1.3.4.nix {};
+  cfssl_1_4_1 = pkgs.callPackage pkgs/cfssl/1.4.1.nix {};
 
   nixos-yubikey-configuration = {
 
@@ -41,7 +41,7 @@ let
     #
     # ref: https://rzetterberg.github.io/yubikey-gpg-nixos.html
     environment.systemPackages = with pkgs; [
-      cfssl_1_3_4
+      cfssl_1_4_1
       cryptsetup
       diceware
       ent
