@@ -351,7 +351,7 @@ let
           echo "done."
 
           echo "Merging changes in $GNUPGHOME to the backup git repo..."
-          if [ -z "$(${gitcmd} pull $GNUPGHOME)" ]; then
+          if (${gitcmd} pull $GNUPGHOME); then
             echo "done."
           else
             echo "The backup merge failed!"
